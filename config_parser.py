@@ -1,6 +1,7 @@
+from typing import Any
+
 REQUIRED_KEYS = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"]
 
-from typing import Any
 
 class ConfigError(Exception):
     """Raised when the configuration file is invalid."""
@@ -44,22 +45,22 @@ def parse_lines(lines: list[str]) -> dict[str, str]:
 
 
 def check_required_keys(config: dict[str, str]) -> None:
-         missing = []
-         for key in REQUIRED_KEYS:
-             if key not in config:
-                 missing.append(key)
-         if missing:
-             raise ConfigError(f"Missing keys: {', '.join(missing)}")
- 
- 
+    missing = []
+    for key in REQUIRED_KEYS:
+        if key not in config:
+            missing.append(key)
+    if missing:
+        raise ConfigError(f"Missing keys: {', '.join(missing)}")
+
+
 def parse_positive_int(config: dict[str, str], key: str) -> int:
-         try:
-             number = int(config[key])
-         except ValueError:
-             raise ConfigError(f"{key} is not an entier")
-         if number <= 0:
-             raise ConfigError(f"{key} must be greater than 0, got {number}")
-         return number
+    try:
+        number = int(config[key])
+    except ValueError:
+        raise ConfigError(f"{key} is not an entier")
+    if number <= 0:
+        raise ConfigError(f"{key} must be greater than 0, got {number}")
+    return number
 
 
 def parse_coordinates(config: dict[str, str], key: str,
