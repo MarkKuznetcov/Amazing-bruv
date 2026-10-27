@@ -92,6 +92,17 @@ def parse_output_file(config: dict[str, str], key: str) -> str:
     return config[key]
 
 
+def parse_seed(config: dict[str, str]) -> int | None:
+    value = config.get("SEED")
+    if value is None:
+        return None
+    try:
+        seed = int(value)   # convert value to an int
+    except ValueError:
+        raise ConfigError(f"SEED must be an integer, got {value!r}") from None   # a clear message
+    return seed
+
+
 def load_config(path: str) -> dict[str, Any]:
     lines = read_config_file(path)
     config = parse_lines(lines)
@@ -101,6 +112,8 @@ def load_config(path: str) -> dict[str, Any]:
     height = parse_positive_int(config, "HEIGHT")
     entry = parse_coordinates(config, "ENTRY", width, height)
     exit_ = parse_coordinates(config, "EXIT", width, height)
+    seed = parse_coordinates(config.get("SEED"))
+    dict.get
     if entry == exit_:
         raise ConfigError(f"ENTRY and EXIT must be different, both are {entry}")
 
