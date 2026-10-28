@@ -1,6 +1,7 @@
    # Default configuration
    # Mark's note: Exit doit tjrs etre dans la taille de maze
    # Perfecttrue, means that there is only one way out
+   # vick: we'll also need a seed settings iirc
    
    WIDTH=20
    HEIGHT=15
@@ -8,4 +9,4 @@
    EXIT=19,14
    OUTPUT_FILE=maze.txt
    PERFECT=True
-   SED=42
+   SEED=8
