@@ -11,7 +11,6 @@
 #   normal corridor
 
 def render_maze(self, maze: list[list[int]]) -> None:
-    """Render a maze using ASCII characters."""
     north = 1
     east = 2
     south = 4
@@ -53,3 +52,18 @@ def render_maze(self, maze: list[list[int]]) -> None:
             bottom_line += "   +"
 
     print(bottom_line)
+
+
+def path_to_cells():
+    """Convert the shortest path into coordinates."""
+    pass
+
+
+def colorize():
+    """Apply an ANSI color to text."""
+    pass
+
+
+def display_menu():
+    """Handle user interactions."""
+    pass
