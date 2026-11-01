@@ -1,4 +1,4 @@
-from config_parser import ConfigError
+from all_before.config_parser import ConfigError
 
 def write_maze_file(path: str, grid: list[list[int]],
                     entry: tuple[int, int], exit_: tuple[int, int],

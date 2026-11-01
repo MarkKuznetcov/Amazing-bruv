@@ -112,8 +112,9 @@ def load_config(path: str) -> dict[str, Any]:
     height = parse_positive_int(config, "HEIGHT")
     entry = parse_coordinates(config, "ENTRY", width, height)
     exit_ = parse_coordinates(config, "EXIT", width, height)
-    seed = parse_coordinates(config.get("SEED"))
-    dict.get
+    perfect = parse_bool(config, "PERFECT")
+    seed = parse_seed(config)
+
     if entry == exit_:
         raise ConfigError(f"ENTRY and EXIT must be different, both are {entry}")
 
@@ -124,4 +125,5 @@ def load_config(path: str) -> dict[str, Any]:
         "exit": exit_,
         "output_file": parse_output_file(config, "OUTPUT_FILE"),
         "perfect": parse_bool(config, "PERFECT"),
+        "seed": seed
     }
