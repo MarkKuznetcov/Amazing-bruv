@@ -1,12 +1,12 @@
 import random
-#for random.shuffle(numbers)
+# for random.shuffle(numbers)
 
 N = 1
 E = 2
 S = 4
 W = 8
 
-OPPOSITE = {N :S, S: N, W: E, E: W}
+OPPOSITE = {N: S, S: N, W: E, E: W}
 
 DELTA = {
     N: (0, -1),
@@ -23,6 +23,7 @@ pattern = [
     "..X.XXX"
 ]
 
+
 class UnionFind:
     def __init__(self, n):
         self.parent = list(range(n))
@@ -37,7 +38,7 @@ class UnionFind:
     def union(self, a, b):
         root_a = self.find(a)
         root_b = self.find(b)
-        #if they belong to the same group, no merge happened so it's false, even tho the group is the same
+        # if they belong to the same group, no merge happened so it's false, even tho the group is the same
         if root_a == root_b:
             return False
         # union by size, if one group is bigger than the other,
@@ -51,25 +52,27 @@ class UnionFind:
 
         return True
 
+
 class Mazegenerator:
     def __init__(self, width, height, seed=None):
         self.width = width
         self.height = height
         self.rng = random.Random(seed)
-        #creates a new instance of the Random class,
-        #so if the seed is diff, the new shuffle thingy/instance will be created
+        # creates a new instance of the Random class,
+        # so if the seed is diff, the new shuffle thingy/instance will be created
         self.grid = [[15 for _ in range(width)]
             for _ in range(height)]
         # your own grid instance for this generator, this seed
         # 15 because at this point all the walls are closed compeltely
         self.blocked = set()
-        #empty set, later i'll put 42 coordinates inside of it
-    #it deletes walls in a cell then ajustes the cells around it
+        # empty set, later i'll put 42 coordinates inside of it
+        # it deletes walls in a cell then ajustes the cells around it
+
     def carve(self, x, y, d):
-        dx, dy = DELTA[d] #called "unpacking", it took values from DELTA[d] adn assigned them to dx, dy
+        dx, dy = DELTA[d]  # called "unpacking", it took values from DELTA[d] adn assigned them to dx, dy
         nx = x + dx
         ny = y + dy
-        #it eliminates the d wall in the initial cell, and the OPPOSITE of the d wall in the other impacted cell
+        # it eliminates the d wall in the initial cell, and the OPPOSITE of the d wall in the other impacted cell
         self.grid[y][x] &= ~d
         self.grid[ny][nx] &= ~OPPOSITE[d]
 
@@ -77,7 +80,7 @@ class Mazegenerator:
         edges = []
         for y in range(self.height):
             for x in range(self.width):
-              # just to get the exact num of cells independently of the grid
+                # just to get the exact num of cells independently of the grid
                 cell = y * self.width + x
                 # 42 logo check
                 if cell in self.blocked:
@@ -115,7 +118,7 @@ class Mazegenerator:
                 if open_region:
                     return True
         return False
- 
+
     def _add_loops(self):
         edges = self._build_edges()
         for a, b in edges:
@@ -141,7 +144,7 @@ class Mazegenerator:
                 self.grid[ny][nx] |= OPPOSITE[direction]
 
     def generate(self, perfect=True):
-    # Reset the grid -> so all walls are closed
+        # Reset the grid -> so all walls are closed
         self.grid = [
             [15 for _ in range(self.width)]
             for _ in range(self.height)
@@ -168,7 +171,7 @@ class Mazegenerator:
             if not perfect:
                 self.add_loops()
         return self.grid
-    
+
     def print_maze(self):
         # Print top border
         print("+" + "---+" * self.width)
@@ -387,20 +390,20 @@ class Mazegenerator:
 # maze.print_maze()
 
 
-maze = Mazegenerator(15, 15)
-# maze.place_42_pattern()
-# for y in range(maze.height):
-#     for x in range(maze.width):
-#         cell = y * maze.width + x
-#         if cell in maze.blocked:
-#             print("X", end=" ")
-#         else:
-#             print(".", end=" ")
-#     print()
-# # print("Blocked cells:", len(maze.blocked))
-# # print("Blocked IDs:", sorted(maze.blocked))
-# maze.print_maze()
+# maze = Mazegenerator(15, 15)
+# # maze.place_42_pattern()
+# # for y in range(maze.height):
+# #     for x in range(maze.width):
+# #         cell = y * maze.width + x
+# #         if cell in maze.blocked:
+# #             print("X", end=" ")
+# #         else:
+# #             print(".", end=" ")
+# #     print()
+# # # print("Blocked cells:", len(maze.blocked))
+# # # print("Blocked IDs:", sorted(maze.blocked))
+# # maze.print_maze()
 
-maze.generate()
-print("Blocked cells:", len(maze.blocked))
-maze.print_maze()
+# maze.generate()
+# print("Blocked cells:", len(maze.blocked))
+# maze.print_maze()

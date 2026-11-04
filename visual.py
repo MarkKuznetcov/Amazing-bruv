@@ -10,21 +10,31 @@
 # █  closed 42-pattern cell
 #   normal corridor
 
-def render_maze(self, maze: list[list[int]]) -> None:
+BLOCKED_CELL = "█"
+# maybe I should add the walls etc like that?
+
+def render_maze(
+    grid: list[list[int]],
+    entry: tuple[int, int],
+    exit_: tuple[int, int],
+    path: list[tuple[int, int]],
+    blocked: set[int],
+) -> None:
     north = 1
     east = 2
     south = 4
     west = 8
 
-    height = len(maze)
-    width = len(maze[0])
+    height = len(grid)
+    width = len(grid[0])
 
     for y in range(height):
         top_line = "+"
         cell_line = ""
 
         for x in range(width):
-            cell = maze[y][x]
+            cell = grid[y][x]
+            cell_id = y * width + x
 
             if cell & north:
                 top_line += "---+"
@@ -36,15 +46,25 @@ def render_maze(self, maze: list[list[int]]) -> None:
             else:
                 cell_line += " "
 
-            cell_line += "   "
+            # Add the cell content
+            if cell_id in blocked:
+                cell_line += BLOCKED_CELL * 3
+            elif (x, y) == entry:
+                cell_line += " S "
+            elif (x, y) == exit_:
+                cell_line += " E "
+            elif (x, y) in path:
+                cell_line += " . "
+            else:
+                cell_line += "   "
 
-        cell_line += "|" if maze[y][width - 1] & east else " "
+        cell_line += "|" if grid[y][width - 1] & east else " "
         print(top_line)
         print(cell_line)
 
     bottom_line = "+"
     for x in range(width):
-        cell = maze[height - 1][x]
+        cell = grid[height - 1][x]
 
         if cell & south:
             bottom_line += "---+"
@@ -66,4 +86,8 @@ def colorize():
 
 def display_menu():
     """Handle user interactions."""
+    # 1. Regenerate maze
+    # 2. Show/hide shortest path
+    # 3. Change wall color
+    # 4. Quit
     pass
