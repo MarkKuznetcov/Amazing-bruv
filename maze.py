@@ -283,7 +283,7 @@ class Mazegenerator:
 # maze.carve(1, 1, W)
 # for row in maze.grid:
 #     print(row)
-        
+
 # test the find method
 # uf = UnionFind(6)
 # uf.parent[1] = 0

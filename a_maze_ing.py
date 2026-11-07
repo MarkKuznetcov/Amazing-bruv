@@ -1,9 +1,12 @@
+import sys
+
 from all_before.config_parser import load_config
 from maze import Mazegenerator
-from visual import render_maze
+from visual import display_menu
 
 
 def main() -> None:
+    sys.stdout.reconfigure(encoding="utf-8")
     config = load_config("all_before/config.txt")
 
     generator = Mazegenerator(
@@ -14,12 +17,11 @@ def main() -> None:
 
     grid = generator.generate(config["perfect"])
 
-    render_maze(
-        grid=grid,
+    display_menu(
+        generator=generator,
         entry=config["entry"],
         exit_=config["exit"],
-        path=[],
-        blocked=generator.blocked,
+        perfect=config["perfect"],
     )
 
 
