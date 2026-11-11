@@ -168,8 +168,8 @@ class Mazegenerator:
                     self.carve(x, y, E)
                 else:
                     self.carve(x, y, S)
-            if not perfect:
-                self.add_loops()
+        if not perfect:
+            self._add_loops()
         return self.grid
 
     def print_maze(self):
@@ -198,6 +198,8 @@ class Mazegenerator:
             print(row)
 
     def place_42_pattern(self):
+        self.blocked.clear()
+
         pattern_height = len(pattern)
         pattern_width = len(pattern[0])
 
@@ -385,24 +387,24 @@ class Mazegenerator:
 # maze.generate()
 # maze.print_maze()
 
-# maze = Mazegenerator(30, 30, seed=43)
-# maze.generate()
-# maze.print_maze()
+maze = Mazegenerator(30, 30, seed=43)
+maze.generate()
+maze.print_maze()
 
 
 # maze = Mazegenerator(15, 15)
-# # maze.place_42_pattern()
-# # for y in range(maze.height):
-# #     for x in range(maze.width):
-# #         cell = y * maze.width + x
-# #         if cell in maze.blocked:
-# #             print("X", end=" ")
-# #         else:
-# #             print(".", end=" ")
-# #     print()
-# # # print("Blocked cells:", len(maze.blocked))
-# # # print("Blocked IDs:", sorted(maze.blocked))
-# # maze.print_maze()
+# maze.place_42_pattern()
+# for y in range(maze.height):
+#     for x in range(maze.width):
+#         cell = y * maze.width + x
+#         if cell in maze.blocked:
+#             print("X", end=" ")
+#         else:
+#             print(".", end=" ")
+#     print()
+# # print("Blocked cells:", len(maze.blocked))
+# # print("Blocked IDs:", sorted(maze.blocked))
+# maze.print_maze()
 
 # maze.generate()
 # print("Blocked cells:", len(maze.blocked))
