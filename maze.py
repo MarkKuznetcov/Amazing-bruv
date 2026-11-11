@@ -1,5 +1,7 @@
 import random
 # for random.shuffle(numbers)
+from collections import deque
+# for BFS
 
 N = 1
 E = 2
@@ -218,6 +220,49 @@ class Mazegenerator:
                     cell = maze_y * self.width + maze_x
                     self.blocked.add(cell)
 
+    def solve(self, entry, exit_):
+        queue = deque([entry])
+        visited = {entry}
+        parent = {}
+        directions = {
+            N: "N",
+            E: "E",
+            S: "S",
+            W: "W"
+        }
+        while queue:
+            current = queue.popleft()
+            x, y = current
+            if current == exit_:
+                break
+            for direction, (dx, dy) in DELTA.items():
+                # Check if the wall is closed
+                if self.grid[y][x] & direction:
+                    continue
+                nx = x + dx
+                ny = y + dy
+                neighbour = (nx, ny)
+                # Check maze boundaries
+                if not (0 <= nx < self.width and 0 <= ny < self.height):
+                    continue
+                # Avoid visiting the same cell twice
+                if neighbour in visited:
+                    continue
+                visited.add(neighbour)
+                parent[neighbour] = (current, directions[direction])
+                queue.append(neighbour)
+        # Check whether the exit was reached
+        if exit_ not in visited:
+            return None
+        # Reconstruct the path backwards
+        path = []
+        current = exit_
+        while current != entry:
+            previous, direction = parent[current]
+            path.append(direction)
+            current = previous
+        path.reverse()
+        return path
 
 # Test the maze generator
 # maze = Mazegenerator(20, 30, seed=42)

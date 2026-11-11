@@ -49,6 +49,25 @@ BLOCKED_COLOR = "\033[33m"
 PATH_COLOR = "\033[36m"
 ERROR_COLOR = "\033[31m"
 
+PATH_CHARS = {
+    frozenset(("N", "S")): "│",
+    frozenset(("E", "W")): "─",
+    frozenset(("N", "E")): "└",
+    frozenset(("N", "W")): "┘",
+    frozenset(("S", "E")): "┌",
+    frozenset(("S", "W")): "┐",
+}
+
+# Thicker characters
+# PATH_CHARS = {
+#     frozenset(("N", "S")): "║",
+#     frozenset(("E", "W")): "═",
+#     frozenset(("N", "E")): "╚",
+#     frozenset(("N", "W")): "╝",
+#     frozenset(("S", "E")): "╔",
+#     frozenset(("S", "W")): "╗",
+# }
+
 # duh way clearer
 THEMES = [
     {   # Default
@@ -95,6 +114,7 @@ def render_maze(
     width = len(grid[0])
 
     theme = THEMES[theme_index]
+    path_symbols = path_to_symbols(path)
 
     wall_color = theme["wall"]
     blocked_color = theme["blocked"]
@@ -130,8 +150,9 @@ def render_maze(
             elif (x, y) == exit_:
                 cell_line += colorize(EXIT_CELL, EXIT_COLOR)
                 # TODO change to theme later
-            elif (x, y) in path:
-                cell_line += colorize(PATH_CELL, PATH_COLOR)
+            elif (x, y) in path_symbols:
+                symbol = path_symbols[(x, y)]
+                cell_line += colorize(f" {symbol} ", PATH_COLOR)
                 # TODO change to theme later
             else:
                 cell_line += EMPTY_CELL
@@ -155,10 +176,67 @@ def render_maze(
     print(bottom_line)
 
 
-def path_to_cells():
+def path_to_cells(
+    entry: tuple[int, int],
+    path: list[str],
+) -> list[tuple[int, int]]:
     """Convert the shortest path into coordinates."""
-    pass
 
+    x, y = entry
+    cells = [(x, y)]
+
+    for direction in path:
+        if direction == "N":
+            y -= 1
+        elif direction == "E":
+            x += 1
+        elif direction == "S":
+            y += 1
+        elif direction == "W":
+            x -= 1
+
+        cells.append((x, y))
+
+    return cells
+
+def path_to_symbols(path: list[tuple[int, int]]) -> dict:
+    symbols = {}
+
+    for i, (x, y) in enumerate(path):
+        connections = set()
+
+        if i > 0:
+            px, py = path[i - 1]
+            connections.add(get_direction(x, y, px, py))
+
+        if i < len(path) - 1:
+            nx, ny = path[i + 1]
+            connections.add(get_direction(x, y, nx, ny))
+
+        if len(connections) == 1:
+            direction = next(iter(connections))
+            symbols[(x, y)] = "│" if direction in ("N", "S") else "─"
+        else:
+            symbols[(x, y)] = PATH_CHARS.get(
+                frozenset(connections), "•"
+            )
+
+    return symbols
+
+def get_direction(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+
+    if dx == 0 and dy == -1:
+        return "N"
+    if dx == 1 and dy == 0:
+        return "E"
+    if dx == 0 and dy == 1:
+        return "S"
+    if dx == -1 and dy == 0:
+        return "W"
+
+    return ""
 
 def colorize(text: str, color: str) -> str:
     return f"{color}{text}{COLOR_RESET}"
@@ -173,9 +251,9 @@ def display_menu(
     entry: tuple[int, int],
     exit_: tuple[int, int],
     perfect: bool,
-    path: list[tuple[int, int]] | None = None,
+    path: list[str] | None = None,
 ) -> None:
-    path_cells = path if path is not None else []
+    path_cells = path_to_cells(entry, path) if path else []
     theme_index = 0
     show_path = False
     error_message = ""
@@ -205,6 +283,8 @@ def display_menu(
 
         if choice == "1":
             grid = generator.generate(perfect)
+            path = generator.solve(entry, exit_)
+            path_cells = path_to_cells(entry, path) if path else []
         elif choice == "2":
             show_path = not show_path
         elif choice == "3":

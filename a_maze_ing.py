@@ -16,12 +16,14 @@ def main() -> None:
     )
 
     grid = generator.generate(config["perfect"])
+    path = generator.solve(config["entry"], config["exit"])
 
     display_menu(
         generator=generator,
         entry=config["entry"],
         exit_=config["exit"],
         perfect=config["perfect"],
+        path=path,
     )
 
 
