@@ -387,7 +387,7 @@ class Mazegenerator:
 # maze.print_maze()
 
 
-maze = Mazegenerator(15, 15)
+maze = Mazegenerator(20, 20)
 # maze.place_42_pattern()
 # for y in range(maze.height):
 #     for x in range(maze.width):
