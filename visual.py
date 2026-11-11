@@ -64,6 +64,6 @@ def colorize():
     pass
 
 
-def display_menu():
+def menu():
     """Handle user interactions."""
     pass
