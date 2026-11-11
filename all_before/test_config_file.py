@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from config_parser import ConfigError, load_config
+from all_before.config_parser import ConfigError, load_config
 
 BASE = {
     "WIDTH": "20",
