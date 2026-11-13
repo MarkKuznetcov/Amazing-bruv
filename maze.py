@@ -123,6 +123,8 @@ class Mazegenerator:
 
     def _add_loops(self):
         edges = self._build_edges()
+        self.rng.shuffle(edges)
+        loops_added = 0
         for a, b in edges:
             x = a % self.width
             y = a // self.width
@@ -130,11 +132,8 @@ class Mazegenerator:
                 direction = E
             else:
                 direction = S
-            # Skip walls already open
+            # Skip walls that are already open
             if not (self.grid[y][x] & direction):
-                continue
-            # Random selection
-            if self.rng.random() > 0.15:
                 continue
             # Temporarily open the wall
             self.carve(x, y, direction)
@@ -144,6 +143,14 @@ class Mazegenerator:
                 nx = b % self.width
                 ny = b // self.width
                 self.grid[ny][nx] |= OPPOSITE[direction]
+                continue
+            # The opening was accepted
+            loops_added += 1
+            # We need at least two loops
+            if loops_added >= 2:
+                break
+        if loops_added < 2:
+            print("Could not add two loops without creating an open 3x3.")
 
     def generate(self, perfect=True):
         # Reset the grid -> so all walls are closed
@@ -172,6 +179,7 @@ class Mazegenerator:
                     self.carve(x, y, S)
         if not perfect:
             self._add_loops()
+            self.reduce_dead_ends()
         return self.grid
 
     def print_maze(self):
@@ -263,6 +271,68 @@ class Mazegenerator:
             current = previous
         path.reverse()
         return path
+
+    def count_dead_ends(self):
+        dead_ends = 0
+        for y in range(self.height):
+            for x in range(self.width):
+                # Ignore blocked cells (the 42 pattern)
+                if (x, y) in self.blocked:
+                    continue
+                cell = self.grid[y][x]
+                passages = 0
+                if not (cell & N):
+                    passages += 1
+                if not (cell & E):
+                    passages += 1
+                if not (cell & S):
+                    passages += 1
+                if not (cell & W):
+                    passages += 1
+                if passages == 1:
+                    dead_ends += 1
+        return dead_ends
+
+# pour vérifier le nb des loops clairement
+    def count_loops(self):
+        open_edges = 0
+        for y in range(self.height):
+            for x in range(self.width):
+                if not (self.grid[y][x] & E):
+                    open_edges += 1
+                if not (self.grid[y][x] & S):
+                    open_edges += 1
+        accessible_cells = self.width * self.height - len(self.blocked)
+        return open_edges - accessible_cells + 1
+
+    def reduce_dead_ends(self):
+        edges = self._build_edges()
+        self.rng.shuffle(edges)
+        dead_ends_before = self.count_dead_ends()
+        for a, b in edges:
+            x = a % self.width
+            y = a // self.width
+            if b == a + 1:
+                direction = E
+            else:
+                direction = S
+            # Skip walls that are already open
+            if not (self.grid[y][x] & direction):
+                continue
+            # Try opening the wall
+            self.carve(x, y, direction)
+            dead_ends_after = self.count_dead_ends()
+            # Reject if it creates a 3x3 or doesn't reduce dead ends
+            if (self._has_open_3x3()
+                    or dead_ends_after >= dead_ends_before):
+                self.grid[y][x] |= direction
+                nx = b % self.width
+                ny = b // self.width
+                self.grid[ny][nx] |= OPPOSITE[direction]
+            else:
+                # Keep the opening and update our count
+                dead_ends_before = dead_ends_after
+        return dead_ends_before
 
 # Test the maze generator
 # maze = Mazegenerator(20, 30, seed=42)
