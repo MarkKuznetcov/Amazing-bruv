@@ -45,8 +45,6 @@ COLOR_RESET = "\033[0m"
 
 ENTRY_COLOR = "\033[35m"
 EXIT_COLOR = "\033[31m"
-BLOCKED_COLOR = "\033[33m"
-PATH_COLOR = "\033[36m"
 ERROR_COLOR = "\033[31m"
 
 PATH_CHARS = {
@@ -73,26 +71,32 @@ THEMES = [
     {   # Default
         "wall": "\033[37m",
         "blocked": "\033[34m",
+        "path": "\033[31m",
     },
     {   # Green
         "wall": "\033[32m",
         "blocked": "\033[33m",
+        "path": "\033[33m",
     },
     {   # Red
         "wall": "\033[31m",
         "blocked": "\033[37m",
+        "path": "\033[37m",
     },
     {   # Cyan
         "wall": "\033[36m",
         "blocked": "\033[35m",
+        "path": "\033[35m",
     },
     {   # Grey
         "wall": "\033[33m",
         "blocked": "\033[31m",
+        "path": "\033[31m",
     },
     {   # Grey
         "wall": "\033[30m",
         "blocked": "\033[32m",
+        "path": "\033[32m",
     },
 ]
 
@@ -118,7 +122,7 @@ def render_maze(
 
     wall_color = theme["wall"]
     blocked_color = theme["blocked"]
-    # path_color = theme["path"]
+    path_color = theme["path"]
     # entry_color = theme["entry"]
     # exit_color = theme["exit"]
 
@@ -152,8 +156,7 @@ def render_maze(
                 # TODO change to theme later
             elif (x, y) in path_symbols:
                 symbol = path_symbols[(x, y)]
-                cell_line += colorize(f" {symbol} ", PATH_COLOR)
-                # TODO change to theme later
+                cell_line += colorize(f" {symbol} ", path_color)
             else:
                 cell_line += EMPTY_CELL
 
@@ -180,8 +183,6 @@ def path_to_cells(
     entry: tuple[int, int],
     path: list[str],
 ) -> list[tuple[int, int]]:
-    """Convert the shortest path into coordinates."""
-
     x, y = entry
     cells = [(x, y)]
 
@@ -198,6 +199,7 @@ def path_to_cells(
         cells.append((x, y))
 
     return cells
+
 
 def path_to_symbols(path: list[tuple[int, int]]) -> dict:
     symbols = {}
@@ -223,6 +225,7 @@ def path_to_symbols(path: list[tuple[int, int]]) -> dict:
 
     return symbols
 
+
 def get_direction(x1, y1, x2, y2):
     dx = x2 - x1
     dy = y2 - y1
@@ -237,6 +240,7 @@ def get_direction(x1, y1, x2, y2):
         return "W"
 
     return ""
+
 
 def colorize(text: str, color: str) -> str:
     return f"{color}{text}{COLOR_RESET}"
@@ -281,15 +285,15 @@ def display_menu(
 
         choice = input("Choice: ").strip()
 
-        if choice == "1":
+        if choice == "1" or choice.lower() == "m":
             grid = generator.generate(perfect)
             path = generator.solve(entry, exit_)
             path_cells = path_to_cells(entry, path) if path else []
-        elif choice == "2":
+        elif choice == "2" or choice.lower() == "p":
             show_path = not show_path
-        elif choice == "3":
+        elif choice == "3" or choice.lower() == "c":
             theme_index = (theme_index + 1) % len(THEMES)
-        elif choice == "4":
+        elif choice == "4" or choice.lower() == "q":
             return
         else:
             error_message = "Invalid choice. Please select 1, 2, 3, or 4."

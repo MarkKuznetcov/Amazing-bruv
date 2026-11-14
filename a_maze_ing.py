@@ -21,13 +21,13 @@ def main() -> None:
     print("Dead ends:", generator.count_dead_ends())
     path = generator.solve(config["entry"], config["exit"])
 
-    # display_menu(
-    #     generator=generator,
-    #     entry=config["entry"],
-    #     exit_=config["exit"],
-    #     perfect=config["perfect"],
-    #     path=path,
-    # )
+    display_menu(
+        generator=generator,
+        entry=config["entry"],
+        exit_=config["exit"],
+        perfect=config["perfect"],
+        path=path,
+    )
 
 
 if __name__ == "__main__":
